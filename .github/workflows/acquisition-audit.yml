@@ -1,0 +1,80 @@
+name: Official-source acquisition audit
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        type: choice
+        options: [all, retry]
+        default: all
+        description: All bureaus or only failed bureaus from the same month
+  schedule:
+    # 06:00 JST on the 20th and 25th (UTC previous day).
+    - cron: "0 21 19,24 * *"
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: official-source-audit
+  cancel-in-progress: false
+jobs:
+  audit:
+    # Enable only after reviewing source inventory and network requirements.
+    if: github.event_name == 'workflow_dispatch' || vars.ENABLE_ACQUISITION_AUDIT == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r scripts/requirements.txt
+      - id: plan
+        env:
+          REQUEST_MODE: ${{ inputs.mode }}
+        run: |
+          echo "month=$(TZ=Asia/Tokyo date +%Y-%m)" >> "$GITHUB_OUTPUT"
+          if [ -n "$REQUEST_MODE" ]; then
+            echo "mode=$REQUEST_MODE" >> "$GITHUB_OUTPUT"
+          elif [ "$(TZ=Asia/Tokyo date +%d)" = "25" ]; then
+            echo "mode=retry" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=all" >> "$GITHUB_OUTPUT"
+          fi
+      - id: prior
+        if: steps.plan.outputs.mode == 'retry'
+        uses: actions/github-script@v7
+        env:
+          TARGET_MONTH: ${{ steps.plan.outputs.month }}
+        with:
+          script: |
+            const list = await github.paginate(github.rest.actions.listArtifactsForRepo, {...context.repo,per_page:100});
+            const prefix = `source-state-${process.env.TARGET_MONTH}-`;
+            const candidates = list.filter(a => !a.expired && a.name.startsWith(prefix) && a.workflow_run?.id !== context.runId).sort((a,b) => b.created_at.localeCompare(a.created_at));
+            if (!candidates.length) throw new Error('No acquisition state from this month. Run all first.');
+            core.setOutput('run_id', candidates[0].workflow_run.id);
+            core.setOutput('name', candidates[0].name);
+      - if: steps.plan.outputs.mode == 'retry'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.prior.outputs.run_id }}
+          name: ${{ steps.prior.outputs.name }}
+          path: work/acquisition
+      - run: python scripts/acquisition_audit.py --output work/acquisition --mode "$AUDIT_MODE"
+        env:
+          AUDIT_MODE: ${{ steps.plan.outputs.mode }}
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: source-state-${{ steps.plan.outputs.month }}-${{ github.run_id }}
+          path: work/acquisition/state.json
+          retention-days: 35
+          if-no-files-found: warn
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-source-documents-${{ github.run_id }}
+          path: work/acquisition/20*
+          retention-days: 35
+          if-no-files-found: warn
+      # Intentionally no Supabase publishing until all semantic checks pass.

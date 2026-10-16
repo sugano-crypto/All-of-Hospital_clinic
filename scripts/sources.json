@@ -1,0 +1,58 @@
+[
+  {
+    "id": "hokkaido",
+    "name": "北海道厚生局",
+    "prefectures": 1,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/hokkaido/gyomu/gyomu/hoken_kikan/code_ichiran.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/hokkaido/gyomu/gyomu/hoken_kikan/todokede_juri_ichiran.html"
+  },
+  {
+    "id": "tohoku",
+    "name": "東北厚生局",
+    "prefectures": 6,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/tohoku/gyomu/gyomu/hoken_kikan/itiran.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/tohoku/gyomu/gyomu/hoken_kikan/documents/201805koushin.html"
+  },
+  {
+    "id": "kantoshinetsu",
+    "name": "関東信越厚生局",
+    "prefectures": 10,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/kantoshinetsu/chousa/shitei.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/kantoshinetsu/chousa/kijyun.html"
+  },
+  {
+    "id": "tokaihokuriku",
+    "name": "東海北陸厚生局",
+    "prefectures": 6,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/tokaihokuriku/newpage_00287.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/tokaihokuriku/newpage_00349.html"
+  },
+  {
+    "id": "kinki",
+    "name": "近畿厚生局",
+    "prefectures": 7,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/kinki/tyousa/shinkishitei.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/kinki/gyomu/gyomu/hoken_kikan/shitei_jokyo_00004.html"
+  },
+  {
+    "id": "chugokushikoku",
+    "name": "中国四国厚生局",
+    "prefectures": 5,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/chugokushikoku/chousaka/iryoukikanshitei.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/chugokushikoku/chousaka/shisetsukijunjuri.html"
+  },
+  {
+    "id": "shikoku",
+    "name": "四国厚生支局",
+    "prefectures": 4,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/shikoku/gyomu/gyomu/hoken_kikan/shitei/index.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/shikoku/gyomu/gyomu/hoken_kikan/shitei/index.html"
+  },
+  {
+    "id": "kyushu",
+    "name": "九州厚生局",
+    "prefectures": 8,
+    "facilities": "https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00006.html",
+    "filings": "https://kouseikyoku.mhlw.go.jp/kyushu/gyomu/gyomu/hoken_kikan/index_00007.html"
+  }
+]
