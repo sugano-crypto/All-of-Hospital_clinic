@@ -1,0 +1,26 @@
+name: Official-source preflight (manual)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test the preflight checker
+        run: python -m unittest discover -s tests -p 'test_source_preflight.py' -v
+      - name: Probe 8 bureaus' 16 source page roles
+        run: python scripts/source_preflight.py --output work/source-preflight.json
+      - name: Preserve evidence even if blocked
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: official-source-preflight
+          path: work/source-preflight.json
+          retention-days: 30
+          if-no-files-found: warn
